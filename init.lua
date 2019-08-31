@@ -9,10 +9,13 @@ end
 
 local function register_node(modname, subname, variant, def)
 	local node_name
+	local old_name
 	if minetest.get_current_modname() == "facade" then
-		node_name = ("facade:%s_%s"):format(subname, variant)
+		node_name = ("facade:%s_%s_%s"):format(modname, subname, variant)
+		old_name =("facade:%s_%s"):format(subname, variant)
 	else
-		node_name = (":facade:%s_%s"):format(subname, variant)
+		node_name = (":facade:%s_%s_%s"):format(modname, subname, variant)
+		old_name = (":facade:%s_%s"):format(subname, variant)
 	end
 
 	local existing_def	= minetest.registered_nodes[("%s:%s"):format(modname, subname)] or {}
@@ -23,12 +26,16 @@ local function register_node(modname, subname, variant, def)
 	def.is_ground_content = false
 	def.light_source	  = existing_def.light_source
 	def.sounds			  = existing_def.sounds or default.node_sound_stone_defaults()
-	def.groups			  = table_clone(existing_def.groups or { cracky = 3, oddly_breakable_by_hand = 2, stone = 1 })
+	def.groups			  = table_clone(existing_def.groups or {})
+	if #def.groups == 0 then
+		def.groups = { cracky = 3, oddly_breakable_by_hand = 2, stone = 1 }
+	end
 	if not in_creative then
 		def.groups.not_in_creative_inventory = 1
 	end
 
 	minetest.register_node(node_name, def)
+	minetest.register_alias_force(old_name, node_name)
 end
 
 --------------
