@@ -1,7 +1,7 @@
-facade  = {}
+-- Node (shape) definition and registration
 
--- Define the shapes and registration functions
-dofile (minetest.get_modpath("facade") .. "/shapes.lua")
+local wehavechisels = minetest.get_modpath("mychisel") and minetest.global_exists("chisel")
+local in_creative   = (minetest.settings:get("facade.in_creative_inventory") or "true"):lower() == "true"
 
 local function table_clone(org)
 	return {unpack(org)}
@@ -9,34 +9,29 @@ end
 
 local function register_node(modname, subname, variant, def)
 	local node_name
-	local old_name
 	if minetest.get_current_modname() == "facade" then
-		node_name = ("facade:%s_%s_%s"):format(modname, subname, variant)
-		old_name =("facade:%s_%s"):format(subname, variant)
+		node_name = ("facade:%s_%s"):format(subname, variant)
 	else
-		node_name = (":facade:%s_%s_%s"):format(modname, subname, variant)
-		old_name = (":facade:%s_%s"):format(subname, variant)
+		node_name = (":facade:%s_%s"):format(subname, variant)
 	end
 
-	local existing_def	= minetest.registered_nodes[("%s:%s"):format(modname, subname)] or {}
+	local existing_def = minetest.registered_nodes[("%s:%s"):format(modname, subname)] or {}
 
-	def.drawtype		  = "nodebox"
-	def.paramtype		  = "light"
-	def.paramtype2		  = "facedir"
+	def.drawtype = "nodebox"
+	def.paramtype = "light"
+	def.paramtype2 = "facedir"
 	def.is_ground_content = false
-	def.light_source	  = existing_def.light_source
-	def.sounds			  = existing_def.sounds or default.node_sound_stone_defaults()
-	def.groups			  = table_clone(existing_def.groups or {})
-	if #def.groups == 0 then
-		def.groups = { cracky = 3, oddly_breakable_by_hand = 2, stone = 1 }
-	end
+	def.light_source = existing_def.light_source
+	def.sounds = existing_def.sounds or default.node_sound_stone_defaults()
+	def.groups = table_clone(existing_def.groups or { cracky = 3, oddly_breakable_by_hand = 2, stone = 1 })
+	
 	if not in_creative then
 		def.groups.not_in_creative_inventory = 1
 	end
 
 	minetest.register_node(node_name, def)
-	minetest.register_alias_force(old_name, node_name)
 end
+
 
 --------------
 --Bannerstones
@@ -45,8 +40,8 @@ end
 --Node will be called facade:<subname>_bannerstone
 function facade.register_bannerstone(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "bannerstone", {
-		description   = desc .. " Bannerstone",
-		tiles		 = {
+		description = desc .. " Bannerstone",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
@@ -54,7 +49,7 @@ function facade.register_bannerstone(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_bannerstone.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },
@@ -74,8 +69,8 @@ end
 --Node will be called facade:<subname>_bannerstone_corner
 function facade.register_bannerstone_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "bannerstone_corner", {
-		description   = desc .. " Bannerstone Corner",
-		tiles		 = {
+		description = desc .. " Bannerstone Corner",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_bannerstone.png",
@@ -83,7 +78,7 @@ function facade.register_bannerstone_corner(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_bannerstone.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_bannerstone.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },
@@ -107,9 +102,9 @@ end
 --Node will be called facade:<subname>_centerstone
 function facade.register_centerstone(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "centerstone", {
-		description   = desc .. " Centerstone",
-		tiles		 = { "" .. modname .. "_" .. subname .. ".png^facade_centerstone.png" },
-		node_box	  = {
+		description = desc .. " Centerstone",
+		tiles = { "" .. modname .. "_" .. subname .. ".png^facade_centerstone.png" },
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.4375, -0.4375, -0.4375, 0.4375, 0.4375, 0.4375 },
@@ -155,8 +150,8 @@ end
 --Node will be called facade:<subname>_column
 function facade.register_column(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "column", {
-		description   = desc .. " Column",
-		tiles		 = {
+		description = desc .. " Column",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
@@ -164,7 +159,7 @@ function facade.register_column(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_column.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_column.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, -0.4375, 0.5, 0.5, 0.4375 },
@@ -188,8 +183,8 @@ end
 --Node will be called facade:<subname>_column_corner
 function facade.register_column_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "column_corner", {
-		description   = desc .. " Column Corner",
-		tiles		 = {
+		description = desc .. " Column Corner",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_column.png",
@@ -197,7 +192,7 @@ function facade.register_column_corner(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_column.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_column.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.4375, -0.5, -0.4375, 0.4375, 0.5, 0.4375 },
@@ -228,8 +223,8 @@ end
 function facade.register_corbel(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "corbel", {
 		description = desc .. " Corbel",
-		tiles	   = { "" .. modname .. "_" .. subname .. ".png" },
-		node_box	= {
+		tiles = { "" .. modname .. "_" .. subname .. ".png" },
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, 0, -0.5, 0.5, 0.5, 0.5 },
@@ -244,8 +239,8 @@ end
 function facade.register_corbel_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "corbel_corner", {
 		description = desc .. " Corbel Corner",
-		tiles	   = { "" .. modname .. "_" .. subname .. ".png" },
-		node_box	= {
+		tiles = { "" .. modname .. "_" .. subname .. ".png" },
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, 0, -0.5, 0.5, 0.5, 0.5 },
@@ -260,8 +255,8 @@ end
 function facade.register_corbel_corner_inner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "corbel_corner_inner", {
 		description = desc .. " Corbel Inner Corner",
-		tiles	   = { "" .. modname .. "_" .. subname .. ".png" },
-		node_box	= {
+		tiles = { "" .. modname .. "_" .. subname .. ".png" },
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, 0, -0.5, 0.5, 0.5, 0.5 },
@@ -281,8 +276,8 @@ end
 --Node will be called facade:<subname>_carved_stone_a
 function facade.register_carved_stone_a(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "carved_stone_a", {
-		description   = desc .. " Carved Stone A",
-		tiles		 = {
+		description = desc .. " Carved Stone A",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
@@ -290,7 +285,7 @@ function facade.register_carved_stone_a(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_carved_stone_a.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, -0.4375, 0.5, 0.5, 0.5 },
@@ -318,8 +313,8 @@ end
 --Node will be called facade:<subname>_carved_stone_a_corner
 function facade.register_carved_stone_a_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "carved_stone_a_corner", {
-		description   = desc .. " Carved Stone A Corner",
-		tiles		 = {
+		description = desc .. " Carved Stone A Corner",
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
@@ -327,7 +322,7 @@ function facade.register_carved_stone_a_corner(modname, subname, recipeitem, des
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_carved_stone_a.png"
 		},
-		node_box	  = {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.4375, -0.5, -0.4375, 0.5, 0.5, 0.5 },
@@ -369,7 +364,7 @@ end
 function facade.register_rgspro(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "rgspro", {
 		description = desc .. " RGSpro",
-		tiles	   = {
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
@@ -377,7 +372,7 @@ function facade.register_rgspro(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png"
 		},
-		node_box	= {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 },
@@ -392,7 +387,7 @@ end
 function facade.register_rgspro_inner_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "rgspro_inner_corner", {
 		description = desc .. " RGSpro Inner Corner",
-		tiles	   = {
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
@@ -400,7 +395,7 @@ function facade.register_rgspro_inner_corner(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png"
 		},
-		node_box	= {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 },
@@ -419,7 +414,7 @@ end
 function facade.register_rgspro_outer_corner(modname, subname, recipeitem, desc)
 	register_node(modname, subname, "rgspro_outer_corner", {
 		description = desc .. " RGSpro Outer Corner",
-		tiles	   = {
+		tiles = {
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
@@ -427,7 +422,7 @@ function facade.register_rgspro_outer_corner(modname, subname, recipeitem, desc)
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png",
 			"" .. modname .. "_" .. subname .. ".png^facade_rgspro.png"
 		},
-		node_box	= {
+		node_box = {
 			type  = "fixed",
 			fixed = {
 				{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 },
@@ -448,6 +443,7 @@ end
 
 --Node will be called facade:<subname>_corner_bricks
 function facade.register_corner_bricks(modname, subname, recipeitem, desc)
+	
 	local brick_exists = (
 			minetest.registered_nodes[("%s:%s_brick"):format(modname, subname)] or
 			minetest.registered_nodes[("%s:%sbrick"):format(modname, subname)]
@@ -456,8 +452,8 @@ function facade.register_corner_bricks(modname, subname, recipeitem, desc)
 	if brick_exists then
 		register_node(modname, subname, "corner_bricks", {
 			description = desc .. " Corner Bricks",
-			tiles	   = { "" .. modname .. "_" .. subname .. "_brick.png" },
-			node_box	= {
+			tiles = { "" .. modname .. "_" .. subname .. "_brick.png" },
+			node_box = {
 				type  = "fixed",
 				fixed = {
 					{ -0.5625, -0.5, 0.4375, -0.5, 0, 1 },
@@ -472,9 +468,169 @@ end
 
 
 --------------------------
---Register Nodes/Materials
+--- Columnia shapes
 --------------------------
+		
+-- From mod Columnia (2014 by Glunggi), LGPL 2.1
+-- The shapes are using stock minetest.rotate_node() for positioning.
+
+-- These shapes should not be registered if the regular columnia mod is in use
+if not minetest.get_modpath("columnia") then
+
+	local columnia_rotate = function(itemstack, placer, pointed_thing)
+		if pointed_thing.type ~= "node" then
+			return itemstack
+		end
+
+		local p0 = pointed_thing.under
+		local p1 = pointed_thing.above
+		local param2 = 0
+
+		local placer_pos = placer:getpos()
+		if placer_pos then
+			local dir = {
+				x = p1.x - placer_pos.x,
+				y = p1.y - placer_pos.y,
+				z = p1.z - placer_pos.z
+			}
+			param2 = minetest.dir_to_facedir(dir)
+		end
+
+		if p0.y-1 == p1.y then
+			param2 = param2 + 20
+			if param2 == 21 then
+				param2 = 23
+			elseif param2 == 23 then
+				param2 = 21
+			end
+		end
+
+		return minetest.item_place(itemstack, placer, pointed_thing, param2)
+	end
+	
+	-- Node will be called facade:<subname>_columnia_mid
+	function facade.register_columnia_mid(modname, subname, recipeitem, desc)
+		register_node(modname, subname, "columnia_mid", {
+			description = desc .. " Column Middle",
+			tiles = {"" .. modname.. "_" .. subname .. ".png"},
+			on_place = minetest.rotate_node,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.25, -0.5, -0.25, 0.25, 0.5, 0.25},
+				},
+			},
+		})
+	end
+
+	-- Normally, a single shape should be fine both for bottom and top parts of
+	-- a column. If materials with textures that don't match with themselves 
+	-- when rotated upside-down are added later on, then enable the next function.
+	-- Node will be called facade:<subname>_columnia_bottom
+	function facade.register_columnia_bottom(modname, subname, recipeitem, desc)
+		register_node(modname, subname, "columnia_bottom", {
+			description = desc .. " Column Bottom/Top",
+			tiles = {"" .. modname.. "_" .. subname .. ".png"},
+			on_place = minetest.rotate_node,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.25, -0.5, -0.25, 0.25, 0.5, 0.25},
+					{-0.5, -0.5, -0.5, 0.5, -0.25, 0.5},
+					{-0.375, -0.5, -0.375, 0.375, 0, 0.375},
+				},
+			},
+		})
+	end
+
+	--[[
+	-- This function is commented out, because in the current state, when facade mod
+	-- uses materials without directional textures, having one shape for top
+	-- and bottom of columns is enough. However, for materials which have textures
+	-- that, when rotated, clearly stop matching the other blocks, this function
+	-- is preserved.
+	-- Node will be called facade:<subname>_columnia_top
+	function facade.register_columnia_top(modname, subname, recipeitem, desc)
+		-- whitelist items with textures of clear directionality (e.g. bricks)
+		if string.match(recipeitem, "brick")
+		then	
+			register_node(modname, subname, "columnia_top", {
+				description = desc .. " Column Top/Bottom",
+				tiles = {"" .. modname.. "_" .. subname .. ".png"},
+				on_place = minetest.rotate_node,
+				node_box = {
+					type = "fixed",
+					fixed = {
+						{-0.25, -0.5, -0.25, 0.25, 0.5, 0.25},
+						{-0.5, 0.25, -0.5, 0.5, 0.5, 0.5}, 
+						{-0.375, 0, -0.375, 0.375, 0.5, 0.375},
+					},
+				},
+			})
+		end
+	end
+	]]--
+
+	-- Node will be called facade:<subname>_columnia_crosslink
+	function facade.register_columnia_crosslink(modname, subname, recipeitem, desc)
+		register_node(modname, subname, "columnia_crosslink", {
+			description = desc .. " Column Crosslink",
+			tiles = {"" .. modname.. "_" .. subname .. ".png"},
+			on_place = columnia_rotate,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.25, -0.5, -0.25, 0.25, 0.5, 0.25},
+					{-0.5, 0, -0.25, 0.5, 0.5, 0.25},
+					{-0.25, 0, -0.5, 0.25, 0.5, 0.5},
+					{-0.4375, 0.0625, -0.4375, 0.4375, 0.4375, 0.4375},
+				},
+			},
+		})
+	end
+
+	-- Node will be called facade:<subname>_columnia_link
+	function facade.register_columnia_link(modname, subname, recipeitem, desc)
+		register_node(modname, subname, "columnia_link", {
+			description = desc .. " Column Link",
+			tiles = {"" .. modname.. "_" .. subname .. ".png"},
+			on_place = columnia_rotate,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.25, 0, -0.5, 0.25, 0.5, 0.5},
+				},
+			},
+		})
+	end
+
+	-- Node will be called facade:<subname>_columnia_linkdown
+	function facade.register_columnia_linkdown(modname, subname, recipeitem, desc)
+		register_node(modname, subname, "columnia_linkdown", {
+			description = desc .. " Column Linkdown",
+			tiles = {"" .. modname.. "_" .. subname .. ".png"},
+			on_place = columnia_rotate,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.25, 0, -0.5, 0.25, 0.5, 0.5},
+					{-0.125, -0.5, -0.125, 0.125, 0, 0.125},
+					{-0.1875, -0.5, -0.1875, 0.1875, -0.375, 0.1875},
+					{-0.1875, -0.125, -0.1875, 0.1875, 0, 0.1875},
+				},
+			},
+		})
+	end
+
+end
+
+
+--------------------------
+--Register Nodes
+--------------------------
+		
 function facade.register_facade_nodes(modname, subname, recipeitem, desc)
+	
 	facade.register_bannerstone(modname, subname, recipeitem, desc)
 	facade.register_bannerstone_corner(modname, subname, recipeitem, desc)
 	facade.register_centerstone(modname, subname, recipeitem, desc)
@@ -489,30 +645,45 @@ function facade.register_facade_nodes(modname, subname, recipeitem, desc)
 	facade.register_rgspro_inner_corner(modname, subname, recipeitem, desc)
 	facade.register_rgspro_outer_corner(modname, subname, recipeitem, desc)
 	facade.register_corner_bricks(modname, subname, recipeitem, desc)
-
+	
+	if not minetest.get_modpath("columnia") then
+		facade.register_columnia_mid(modname, subname, recipeitem, desc)
+		facade.register_columnia_bottom(modname, subname, recipeitem, desc)
+		--facade.register_columnia_top(modname, subname, recipeitem, desc)
+		facade.register_columnia_crosslink(modname, subname, recipeitem, desc)
+		facade.register_columnia_link(modname, subname, recipeitem, desc)
+		facade.register_columnia_linkdown(modname, subname, recipeitem, desc)
+	end
+	
 	if wehavechisels then
 		-- register all nodes with mychisel mod to use them without creative priv
-		chisel.register_node("facade", subname, recipeitem, "bannerstone")
-		chisel.register_node("facade", subname, recipeitem, "bannerstone_corner")
-		chisel.register_node("facade", subname, recipeitem, "centerstone")
-		chisel.register_node("facade", subname, recipeitem, "column")
-		chisel.register_node("facade", subname, recipeitem, "column_corner")
-		chisel.register_node("facade", subname, recipeitem, "corbel")
-		chisel.register_node("facade", subname, recipeitem, "corbel_corner")
-		chisel.register_node("facade", subname, recipeitem, "corbel_corner_inner")
-		chisel.register_node("facade", subname, recipeitem, "carved_stone_a")
-		chisel.register_node("facade", subname, recipeitem, "carved_stone_a_corner")
-		chisel.register_node("facade", subname, recipeitem, "rgspro")
-		chisel.register_node("facade", subname, recipeitem, "rgspro_inner_corner")
-		chisel.register_node("facade", subname, recipeitem, "rgspro_outer_corner")
-		chisel.register_node("facade", subname, recipeitem, "corner_bricks")
+		chisel.register_node("facade",subname, recipeitem, "bannerstone")
+		chisel.register_node("facade",subname, recipeitem, "bannerstone_corner")
+		chisel.register_node("facade",subname, recipeitem, "centerstone")
+		chisel.register_node("facade",subname, recipeitem, "column")
+		chisel.register_node("facade",subname, recipeitem, "column_corner")
+		chisel.register_node("facade",subname, recipeitem, "corbel")
+		chisel.register_node("facade",subname, recipeitem, "corbel_corner")
+		chisel.register_node("facade",subname, recipeitem, "corbel_corner_inner")
+		chisel.register_node("facade",subname, recipeitem, "carved_stone_a")
+		chisel.register_node("facade",subname, recipeitem, "carved_stone_a_corner")
+		chisel.register_node("facade",subname, recipeitem, "rgspro")
+		chisel.register_node("facade",subname, recipeitem, "rgspro_inner_corner")
+		chisel.register_node("facade",subname, recipeitem, "rgspro_outer_corner")
+		chisel.register_node("facade",subname, recipeitem, "corner_bricks")
+		
+		if not minetest.get_modpath("columnia") then
+			chisel.register_node("facade",subname, recipeitem, "columnia_mid")
+			chisel.register_node("facade",subname, recipeitem, "columnia_bottom")
+			--chisel.register_node("facade",subname, recipeitem, "columnia_top")
+			chisel.register_node("facade",subname, recipeitem, "columnia_crosslink")
+			chisel.register_node("facade",subname, recipeitem, "columnia_link")
+			chisel.register_node("facade",subname, recipeitem, "columnia_linkdown")
+		end
 	end
 end
 
-if wehavechisels then chisel.add_mod("facade", 14) end								-- register the total number of different designs in this mod with mychisel
+-- register the total number of different designs in this mod with mychisel
+if wehavechisels then chisel.add_mod("facade",14) end
 
--- Register the nodes made from compatible materials
-dofile(minetest.get_modpath("facade") .. "/materials.lua")
 
--- Add a dedicated machine to produce the facade shapes
-dofile(minetest.get_modpath("facade") .. "/shaper.lua")
